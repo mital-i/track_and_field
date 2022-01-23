@@ -1,54 +1,35 @@
 n = int(input())
-runners = {}
-
+graph = {}
+times = {}
 for i in range(n): 
-    runner_i = [int(i) for i in input().split()]
-    runners[i+1]=runner_i
-    
-tracker = [0]*n
-end_time = 0
-def find_end_time(n, runners, current_runner, curr_max_time, current_time, tracker): 
-    global end_time
-    #print(current_runner)
-    if tracker[current_runner-1]!=0:
-        curr_max_time.append(current_time)
-        #end_time = curr_max_time
-        return
-    
-    current_time+=runners[current_runner][0]
-    curr_max_time[0] = max(current_time, curr_max_time[0])
-    tracker[current_runner-1]+=1
-    
-    if (current_runner == n): 
-        curr_max_time[0] = max(current_time, curr_max_time[0])
-        return 
+    line = [int(i) for i in input().split()]
+    times[i+1] = line[0]
+    graph[i+1] = line[2:]
         
-    if runners[current_runner][1] == 0: 
-        curr_max_time[0] = max(current_time, curr_max_time[0])
-        #end_time = curr_max_time
-        return
-    
-    for i in runners[current_runner][1:]: 
-        if (tracker[i-1]!=1): 
-            find_end_time(n, runners, i, curr_max_time, current_time, tracker)
+#print(graph, times)
 
-curr_max = [0]
-find_end_time(n, runners, 1, curr_max, 0, tracker)
-print(curr_max[0])
+# we create a heap (a data structure which returns the smallest element in O(1))
+# In this heap we add (completion time, runner_number)
 
+# eventually we will return the completion time of final runner
+import heapq
 
+visited = set(())
+h = []
+heapq.heappush(h, (times[1], 1))
+visited.add(1)
 
 
-q = heap()
-q.push(2, 1) 
-while(!q.empty()):
-    node = q.pop()
-    if(visited[node]):
-        continue
-    
-    
-    
-    
-    
-    for(next in runners[node]):
-        q.push(next)
+time = 0
+while h:
+    t, n = heapq.heappop(h)
+    time = t
+    #print(n)
+    #print(graph[n])
+    for m in graph[n]:
+        if m not in visited:
+            heapq.heappush(h, (t + times[m], m))
+            visited.add(m)
+
+
+print(time)
